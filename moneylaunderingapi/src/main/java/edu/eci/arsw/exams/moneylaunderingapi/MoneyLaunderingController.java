@@ -14,35 +14,47 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping(value = "/fraud-bank-accounts")
 public class MoneyLaunderingController
 {
     @Autowired
     @Qualifier("MoneyLaunderingServiceStub")
     MoneyLaunderingService moneyLaunderingService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> consultarTodosLosPlanos() {
-        return new ResponseEntity<>(moneyLaunderingService.getSuspectAccounts(), HttpStatus.ACCEPTED);
+    @RequestMapping( value = "/fraud-bank-accounts", method = RequestMethod.GET)
+    public List<SuspectAccount> offendingAccounts() {
+        return moneyLaunderingService.getSuspectAccounts();
     }
 
-        @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> addSuspectAccounts(@RequestBody SuspectAccount account) throws MoneyLaunderingException {
-            moneyLaunderingService.addSuspectAccounts(account);
+
+    @RequestMapping(value = "/fraud-bank-accounts",method = RequestMethod.POST)
+    public ResponseEntity<?> addAccount(@RequestBody SuspectAccount suspectAccount){
+        try {
+            moneyLaunderingService.addAccount(suspectAccount);
             return new ResponseEntity<>(HttpStatus.CREATED);
-
+        } catch (MoneyLaunderingException ex) {
+            Logger.getLogger(MoneyLaunderingController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @RequestMapping(value="/{accountId}",method = RequestMethod.GET)
-    public ResponseEntity<?> getAccountByID(@PathVariable String accountId) throws MoneyLaunderingException {
-        return new ResponseEntity<>(moneyLaunderingService.getAccountStatus(accountId), HttpStatus.ACCEPTED);
+    @RequestMapping(value = "/fraud-bank-accounts/{accountId}",method = RequestMethod.GET)
+    public ResponseEntity<?> getAccountStatus(@PathVariable String accountId){
+        try {
+            return new ResponseEntity<>(moneyLaunderingService.getAccountStatus(accountId), HttpStatus.ACCEPTED);
+        } catch (MoneyLaunderingException ex) {
+            Logger.getLogger(MoneyLaunderingController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @RequestMapping(value="/{accountId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> actualizarCuenta(@RequestBody SuspectAccount cuenta) throws MoneyLaunderingException {
-
-            moneyLaunderingService.updateAccountStatus(cuenta);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+    @RequestMapping(value = "/fraud-bank-accounts/{accountId}",method = RequestMethod.PUT)
+    public ResponseEntity<?> updateAccountStatus(@PathVariable String accountId,@RequestBody SuspectAccount suspectAccount){
+        try {
+            moneyLaunderingService.updateAccountStatus(accountId,suspectAccount);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (MoneyLaunderingException ex) {
+            Logger.getLogger(MoneyLaunderingController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>(ex.getMessage(),HttpStatus.FORBIDDEN);
+        }
     }
 }

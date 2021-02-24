@@ -1,24 +1,28 @@
 package edu.eci.arsw.exams.moneylaunderingapi.model;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class SuspectAccount {
     public String accountId;
-    public AtomicInteger amountOfSmallTransactions;
+    public int amountOfSmallTransactions;
 
-    public SuspectAccount(String accountId, int amountOfSmallTransactions){
+    public SuspectAccount(String accountId, int amountOfSmallTransactions) {
         this.accountId = accountId;
-        this.amountOfSmallTransactions = new AtomicInteger(amountOfSmallTransactions);
+        this.amountOfSmallTransactions = amountOfSmallTransactions;
     }
-    public String getAccountId(){
+
+
+    public String getAccountId() {
         return accountId;
     }
 
-    public int getAmountOfSmallTransactions(){
-        return amountOfSmallTransactions.get();
+    public int getAmountOfSmallTransactions() {
+        return amountOfSmallTransactions;
     }
 
-    public void addTransactions(int newTransactions){
-        amountOfSmallTransactions.getAndAdd(newTransactions);
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public void setAmountOfSmallTransactions(int amountOfSmallTransactions) {
+        this.amountOfSmallTransactions = amountOfSmallTransactions;
     }
 }
