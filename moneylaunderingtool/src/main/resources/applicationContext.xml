@@ -11,7 +11,7 @@
 
     <bean id="primeFindThread" scope="prototype" class="edu.eci.arsw.primefinder.PrimeFinder">
     </bean>
-    
+
     <aop:aspectj-autoproxy/>
-    
+
 </beans>
